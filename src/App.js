@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import Container from './components/Container/Container';
+import SearchPanel from './components/SearchPanel/SearchPanel';
+import CharacterList from './components/CharacterlList/CharacterList';
+import { Switch, Route } from 'react-router-dom';
+import CahracterPages from './components/CharacterPages/CharacterPages';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const App = () => {
+    const [value, setValue] = useState('');
+
+    const upDateValue = (event) => {
+        setValue(event.target.value)
+        console.log(value)
+    }
+
+    return (
+        <Switch>
+            <Route path='/character/:id' component={CahracterPages} />
+            <Route render={() => (
+                <>
+                    <Container>
+                        <SearchPanel value={value} onChange={upDateValue} />
+                        <CharacterList value={value} />
+                    </Container >
+                </>
+            )}
+            />
+        </Switch>
+    )
 }
 
 export default App;
