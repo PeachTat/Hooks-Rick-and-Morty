@@ -6,13 +6,23 @@ import Party from '../Party/Party';
 const url = 'https://rickandmortyapi.com/api/character/';
 
 
+
 const CharacterList = ({ value }) => {
     const [characters, setCharacters] = useState([]);
     const [morty, setMorty] = useState('');
     const [rick, setRick] = useState('');
-    const [prevLink, setPrevLink] = useState(null)
-    const [nextLink, setNextLink] = useState(null)
-    const link = value ? `${url}?name=${value}` : url
+    const [prevLink, setPrevLink] = useState(null);
+    const [nextLink, setNextLink] = useState(null);
+    const link = value ? `${url}?name=${value}` : url;
+
+
+    let storageChar = localStorage.getItem('storageChar');
+
+    if (storageChar) {
+        storageChar = JSON.parse(storageChar)
+    } else {
+        storageChar = []
+    }
 
     const getInfo = async (type) => {
         let url = link;
@@ -30,7 +40,13 @@ const CharacterList = ({ value }) => {
             if (!res.ok) {
                 throw new Error(data.error);
             }
-            setCharacters(data.results)
+            const filterStorageCharacters = data.results.filter((element) => {
+                const { id } = element;
+                return !storageChar.some((el) => {
+                    return el === id
+                })
+            })
+            setCharacters(filterStorageCharacters)
             setPrevLink(data.info.prev)
             setNextLink(data.info.next)
         } catch (error) {
@@ -53,6 +69,7 @@ const CharacterList = ({ value }) => {
 
     const deleteChar = (id) => {
         setCharacters((prevState) => prevState.filter((el) => el.id !== id))
+        localStorage.setItem('storageChar', JSON.stringify(storageChar.concat(id)));
     }
 
     return (
